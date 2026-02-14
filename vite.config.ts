@@ -2,10 +2,14 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  base: '/love-story/',   
+
   plugins: [react()],
+
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+
   build: {
     rollupOptions: {
       input: {
@@ -13,5 +17,6 @@ export default defineConfig({
       },
     },
   },
+
   publicDir: 'public',
 });
