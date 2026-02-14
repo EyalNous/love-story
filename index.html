@@ -12,15 +12,9 @@
   <link rel="apple-touch-icon" href="/love-story/icon-192.png">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: 'Georgia', 'Palatino', serif;
       overflow: hidden;
       position: fixed;
       width: 100%;
@@ -30,8 +24,6 @@
 
     #heart-screen {
       position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       display: flex;
@@ -43,234 +35,152 @@
 
     .heart {
       font-size: 80px;
-      animation: pulse 2s ease-in-out infinite;
-      filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.3));
+      animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.1); opacity: 1; }
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
     }
 
-    #book-container {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #fff9f0 0%, #ffe8d6 100%);
-      overflow: hidden;
-    }
-
-    #book-container.active {
-      display: block;
-    }
+    #book-container { display:none; position:fixed; width:100%; height:100%; }
+    #book-container.active { display:block; }
 
     #pages-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+      height:100%;
+      overflow-y:auto;
+      scroll-snap-type:y mandatory;
     }
 
     .page {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      scroll-snap-align: start;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
+      height:100vh;
+      height:100dvh;
+      scroll-snap-align:start;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .page-content {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      
-      background: white;
-      border-radius: 8px;
-      box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-      transform: none;
-      animation: slideUp 0.6s ease-out forwards;
-    }
-
-    @keyframes slideUp {
-      to { transform: translateY(0); }
+      width:100%;
+      height:100%;
+      background:white;
     }
 
     .page-content img {
-      width: 100%;
-      height: 100%;
-      -o-object-fit: contain;
-         object-fit: contain;
-      -o-object-position: center;
-         object-position: center;
-      display: block;
-    }
-
-    .page-number {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      font-size: 12px;
-      color: rgba(139, 69, 19, 0.4);
-      font-style: italic;
-      z-index: 10;
+      width:100%;
+      height:100%;
+      -o-object-fit:contain;
+         object-fit:contain;
     }
 
     #sound-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s;
+      position:fixed;
+      top:20px;
+      right:20px;
+      width:44px;
+      height:44px;
+      border:none;
+      border-radius:50%;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:white;
+      z-index:100;
     }
 
-    #sound-toggle:active {
-      transform: scale(0.95);
-    }
-
-    #sound-toggle.visible {
-      display: flex;
-    }
-
-    .particle {
-      position: fixed;
-      width: 4px;
-      height: 4px;
-      background: radial-gradient(circle, rgba(255, 192, 203, 0.8), transparent);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: float 8s infinite ease-in-out;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
-    }
+    #sound-toggle.visible { display:flex; }
   </style>
 </head>
+
 <body>
 
-  <div id="heart-screen">
-    <div class="heart">❤️</div>
-  </div>
+<div id="heart-screen">
+  <div class="heart">❤️</div>
+</div>
 
-  <div id="book-container">
-    <button id="sound-toggle" aria-label="Toggle music">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path id="sound-on" d="M11 5L6 9H2v6h4l5 4V5z M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        <path id="sound-off" d="M11 5L6 9H2v6h4l5 4V5z" style="display:none;"/>
-        <line id="sound-off-line" x1="23" y1="9" x2="17" y2="15" style="display:none;"/>
-        <line id="sound-off-line2" x1="17" y1="9" x2="23" y2="15" style="display:none;"/>
-      </svg>
-    </button>
+<div id="book-container">
+  <button id="sound-toggle">🔊</button>
+  <div id="pages-wrapper"></div>
+</div>
 
-    <div id="pages-wrapper"></div>
-  </div>
+<audio id="background-music" loop src="/love-story/assets/music.mp3"></audio>
 
-  <audio id="background-music" loop preload="auto">
-    <source src="/love-story/assets/music.mp3" type="audio/mpeg">
-  </audio>
+<script>
+const BASE = '/love-story/';
 
-  <script>
-    const BASE = '/love-story/';
+const isStandalone =
+  window.navigator.standalone === true ||
+  window.matchMedia('(display-mode: standalone)').matches;
 
-    // ✅ FIXED
-    const isStandalone =
-      window.navigator.standalone === true ||
-      window.matchMedia('(display-mode: standalone)').matches;
+const heartScreen = document.getElementById('heart-screen');
+const bookContainer = document.getElementById('book-container');
+const pagesWrapper = document.getElementById('pages-wrapper');
+const soundToggle = document.getElementById('sound-toggle');
+const bgMusic = document.getElementById('background-music');
 
-    const heartScreen = document.getElementById('heart-screen');
-    const bookContainer = document.getElementById('book-container');
-    const pagesWrapper = document.getElementById('pages-wrapper');
-    const soundToggle = document.getElementById('sound-toggle');
-    const bgMusic = document.getElementById('background-music');
+let musicStarted = false;
+let musicEnabled = false;
 
-    let musicEnabled = false;
-    let musicStarted = false;
+if (isStandalone) {
+  setTimeout(() => {
+    heartScreen.style.display = 'none';
+    bookContainer.classList.add('active');
+    loadBook();
+  }, 1000);
+}
 
-    if (isStandalone) {
-      setTimeout(() => {
-        heartScreen.style.opacity = '0';
-        heartScreen.style.transition = 'opacity 1s ease-out';
+function loadBook() {
+  for (let i = 0; i < 53; i++) {
+    const page = document.createElement('div');
+    page.className = 'page';
 
-        setTimeout(() => {
-          heartScreen.style.display = 'none';
-          bookContainer.classList.add('active');
-          loadBook();
-          createParticles();
-        }, 1000);
-      }, 1500);
-    } else {
-      createParticles();
-    }
+    const content = document.createElement('div');
+    content.className = 'page-content';
 
-    function createParticles() {
-      for (let i = 0; i < 15; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = (8 + Math.random() * 4) + 's';
-        document.body.appendChild(particle);
-      }
-    }
+    const img = document.createElement('img');
+    const ext = i === 0 ? 'jpg' : 'webp';
+    img.src = `${BASE}assets/${i}.${ext}`;
 
-    function loadBook() {
-      const totalPages = 53;
+    content.appendChild(img);
+    page.appendChild(content);
+    pagesWrapper.appendChild(page);
+  }
 
-      for (let i = 0; i < totalPages; i++) {
-        const page = document.createElement('div');
-        page.className = 'page';
+  document.addEventListener('touchstart', tryPlayMusic, { once:true });
+  document.addEventListener('click', tryPlayMusic, { once:true });
+}
 
-        const pageContent = document.createElement('div');
-        pageContent.className = 'page-content';
+function tryPlayMusic() {
+  if (musicStarted) return;
 
-        const img = document.createElement('img');
-        const extension = i === 0 ? 'jpg' : 'webp';
+  const p = bgMusic.play();
 
-        // ✅ already fixed earlier
-        img.src = `${BASE}assets/${i}.${extension}`;
+  if (p !== undefined) {
+    p.then(() => {
+      musicStarted = true;
+      musicEnabled = true;
+      soundToggle.classList.add('visible');
+    }).catch(() => {});
+  }
+}
 
-        pageContent.appendChild(img);
-        page.appendChild(pageContent);
-        pagesWrapper.appendChild(page);
-      }
-    }
+soundToggle.addEventListener('click', () => {
+  if (musicEnabled) {
+    bgMusic.pause();
+    musicEnabled = false;
+    soundToggle.textContent = '🔇';
+  } else {
+    bgMusic.play();
+    musicEnabled = true;
+    soundToggle.textContent = '🔊';
+  }
+});
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/love-story/service-worker.js');
-    }
-  </script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/love-story/service-worker.js');
+}
+</script>
+
 </body>
 </html>
