@@ -8,12 +8,173 @@
   <meta name="theme-color" content="#fff5f5">
   <title>❤️</title>
 
-  <!-- FIXED -->
   <link rel="manifest" href="/love-story/manifest.json">
   <link rel="apple-touch-icon" href="/love-story/icon-192.png">
 
   <style>
-    /* (unchanged CSS) */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Georgia', 'Palatino', serif;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 100%);
+    }
+
+    #heart-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff5f5 0%, #ffe4e1 50%, #ffd4d4 100%);
+      z-index: 1000;
+    }
+
+    .heart {
+      font-size: 80px;
+      animation: pulse 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.3));
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    #book-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #fff9f0 0%, #ffe8d6 100%);
+      overflow: hidden;
+    }
+
+    #book-container.active {
+      display: block;
+    }
+
+    #pages-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .page {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .page-content {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 90%;
+      background: white;
+      border-radius: 8px;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transform: translateY(20px);
+      animation: slideUp 0.6s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+
+    .page-content img {
+      width: 100%;
+      height: 100%;
+      -o-object-fit: cover;
+         object-fit: cover; /* ✅ FIXED */
+      display: block;
+    }
+
+    .page-number {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 12px;
+      color: rgba(139, 69, 19, 0.4);
+      font-style: italic;
+      z-index: 10;
+    }
+
+    #sound-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    #sound-toggle:active {
+      transform: scale(0.95);
+    }
+
+    #sound-toggle.visible {
+      display: flex;
+    }
+
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: radial-gradient(circle, rgba(255, 192, 203, 0.8), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 8s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -35,17 +196,17 @@
     <div id="pages-wrapper"></div>
   </div>
 
-  <!-- FIXED -->
   <audio id="background-music" loop preload="auto">
     <source src="/love-story/assets/music.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    const BASE = '/love-story/'; // ✅ added
+    const BASE = '/love-story/';
 
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                        window.navigator.standalone ||
-                        document.referrer.includes('android-app://');
+    // ✅ FIXED
+    const isStandalone =
+      window.navigator.standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches;
 
     const heartScreen = document.getElementById('heart-screen');
     const bookContainer = document.getElementById('book-container');
@@ -85,12 +246,10 @@
 
     function loadBook() {
       const totalPages = 53;
-      let loadedCount = 0;
 
       for (let i = 0; i < totalPages; i++) {
         const page = document.createElement('div');
         page.className = 'page';
-        page.style.animationDelay = `${i * 0.05}s`;
 
         const pageContent = document.createElement('div');
         pageContent.className = 'page-content';
@@ -98,90 +257,16 @@
         const img = document.createElement('img');
         const extension = i === 0 ? 'jpg' : 'webp';
 
-        // ✅ FIXED
+        // ✅ already fixed earlier
         img.src = `${BASE}assets/${i}.${extension}`;
 
-        img.alt = `Page ${i}`;
-        img.loading = i < 3 ? 'eager' : 'lazy';
-
-        img.onerror = function() {
-          pageContent.style.background = 'linear-gradient(135deg, #fff9f0 0%, #ffe8d6 100%)';
-          pageContent.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #d4a574; font-style: italic;">
-              Page ${i}
-            </div>
-          `;
-        };
-
-        img.onload = function() {
-          loadedCount++;
-          if (loadedCount === 1 && !musicStarted) {
-            tryPlayMusic();
-          }
-        };
-
-        const pageNumber = document.createElement('div');
-        pageNumber.className = 'page-number';
-        pageNumber.textContent = i === 0 ? '' : i;
-
         pageContent.appendChild(img);
-        pageContent.appendChild(pageNumber);
         page.appendChild(pageContent);
         pagesWrapper.appendChild(page);
-      }
-
-      document.addEventListener('touchstart', tryPlayMusic, { once: true });
-      document.addEventListener('click', tryPlayMusic, { once: true });
-    }
-
-    function tryPlayMusic() {
-      if (musicStarted) return;
-      musicStarted = true;
-
-      bgMusic.play().then(() => {
-        musicEnabled = true;
-        soundToggle.classList.add('visible');
-        updateSoundIcon();
-      }).catch(() => {});
-    }
-
-    soundToggle.addEventListener('click', () => {
-      if (musicEnabled) {
-        bgMusic.pause();
-        musicEnabled = false;
-      } else {
-        bgMusic.play().then(() => {
-          musicEnabled = true;
-        }).catch(() => {});
-      }
-      updateSoundIcon();
-
-      if (navigator.vibrate) {
-        navigator.vibrate(10);
-      }
-    });
-
-    function updateSoundIcon() {
-      const soundOn = document.getElementById('sound-on');
-      const soundOff = document.getElementById('sound-off');
-      const soundOffLine = document.getElementById('sound-off-line');
-      const soundOffLine2 = document.getElementById('sound-off-line2');
-
-      if (musicEnabled) {
-        soundOn.style.display = 'block';
-        soundOff.style.display = 'block';
-        soundOffLine.style.display = 'none';
-        soundOffLine2.style.display = 'none';
-      } else {
-        soundOn.style.display = 'none';
-        soundOff.style.display = 'block';
-        soundOffLine.style.display = 'block';
-        soundOffLine2.style.display = 'block';
       }
     }
 
     if ('serviceWorker' in navigator) {
-      // ✅ FIXED
       navigator.serviceWorker.register('/love-story/service-worker.js');
     }
   </script>
